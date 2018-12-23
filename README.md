@@ -1,11 +1,11 @@
 
-[microbadger]: https://microbadger.com/images/uip9av6y/unbound-control-feeder
+[microbadger]: https://microbadger.com/images/uip9av6y/unbound-zone-feeder
 [docker library]: https://store.docker.com/images/python
 [MIT]: https://opensource.org/licenses/MIT
 
-[![](https://images.microbadger.com/badges/image/uip9av6y/unbound-control-feeder.svg)][microbadger]
-[![](https://images.microbadger.com/badges/version/uip9av6y/unbound-control-feeder.svg)][microbadger]
-[![](https://images.microbadger.com/badges/commit/uip9av6y/unbound-control-feeder.svg)][microbadger]
+[![](https://images.microbadger.com/badges/image/uip9av6y/unbound-zone-feeder.svg)][microbadger]
+[![](https://images.microbadger.com/badges/version/uip9av6y/unbound-zone-feeder.svg)][microbadger]
+[![](https://images.microbadger.com/badges/commit/uip9av6y/unbound-zone-feeder.svg)][microbadger]
 
 # how to use this image
 
@@ -18,21 +18,21 @@ using docker-compose.
 ## using a customized image
 
 ```dockerfile
-FROM unbound-control-feeder:latest
+FROM unbound-zone-feeder:latest
 COPY hosts.blacklist /data/
 CMD [ "-f", "/data/hosts.blacklist" ]
 ```
 
 the image takes no build arguments and can be built running
-`docker build -t my-unbound-control-feeder .`
+`docker build -t my-unbound-zone-feeder .`
 
 if the customized image does **not** spawn an unbound server,
 you must link it to the container or make it otherwise accessible.
 
-`docker run -d --name my-running-unbound-control-feeder
+`docker run -d --name my-running-unbound-zone-feeder
   --add-host=unbound:10.180.0.1
   --env UZF_HOST=unbound
-  my-unbound-control-feeder`
+  my-unbound-zone-feeder`
 
 you may need to publish the ports the prometheus webserver is
 listening on to the host by specifying the -p option, for example
@@ -41,10 +41,10 @@ listening on to the host by specifying the -p option, for example
 
 ## using environment variables
 
-`docker run -d --name my-running-unbound-control-feeder
+`docker run -d --name my-running-unbound-zone-feeder
   --env UZF_HOST=unbound
   --link some-unbound:unbound
-  unbound-control-feeder:latest`
+  unbound-zone-feeder:latest`
 
 * *UZF_ZONE_TYPE*
 
@@ -112,21 +112,21 @@ listening on to the host by specifying the -p option, for example
 
 ## with custom instructions via commandline
 
-`docker run -d --name my-running-unbound-control-feeder
+`docker run -d --name my-running-unbound-zone-feeder
   --link some-unbound:unbound
-  unbound-control-feeder:latest
+  unbound-zone-feeder:latest
   --host unbound`
 
 to get more information about the supported commandlines,
 run the image with the *-h* option
 
-`docker run --rm -it unbound-control-feeder:latest -h`
+`docker run --rm -it unbound-zone-feeder:latest -h`
 
 ## directly via bind mount
 
-`docker run -d --name my-running-unbound-control-feeder
+`docker run -d --name my-running-unbound-zone-feeder
   -v /path/to/hosts:/data:ro
-  unbound-control-feeder:latest
+  unbound-zone-feeder:latest
   --blacklist-file /data/hosts.blacklist`
 
 note that your host's `/path/to/hosts` folder should be populated with a file
