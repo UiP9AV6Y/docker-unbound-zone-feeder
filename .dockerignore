@@ -1,0 +1,10 @@
+./.git
+./*.tgz
+./hooks
+./build
+./examples
+README.md
+LICENSE.txt
+VERSION
+__pycache__/
+*.pyc

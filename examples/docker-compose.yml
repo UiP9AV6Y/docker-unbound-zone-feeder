@@ -1,0 +1,40 @@
+---
+
+version: '2.3'
+
+services:
+  server:
+    image: unbound:unbound-zone-feeder
+    build:
+      context: unbound
+    ports:
+      - "127.0.0.1:5300:53"
+      - "127.0.0.1:5300:53/udp"
+    networks:
+      - control
+  provider:
+    image: unbound-zone-feeder:latest
+    build:
+      context: ..
+    command: [
+      "-b", "docker.io",
+      "-b", "spam.expl0.it",
+      "-b", "malware.inval.id",
+      "-z", "always_nxdomain",
+      "-r", "2",
+      "-v",
+      "-i",
+      "-d", "1",
+      "--metrics"
+    ]
+    environment:
+      UZF_HOST: server
+    ports:
+      - "127.0.0.1:5380:8080"
+    networks:
+      - control
+    depends_on:
+      - server
+
+networks:
+  control:
