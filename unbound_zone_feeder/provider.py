@@ -84,7 +84,7 @@ class FileLinesProvider(HostProvider):
                     except:
                         continue
 
-                    if host == '' or line.startswith('#'):
+                    if host == '' or line.startswith(b'#'):
                         continue
 
                     hosts.append(host)
