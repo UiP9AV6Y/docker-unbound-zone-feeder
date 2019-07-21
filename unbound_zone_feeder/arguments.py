@@ -20,7 +20,7 @@ UNBOUND_ZONE_TYPES = ["static", "deny", "refuse", "redirect", "transparent", "ty
 
 def syntactic_url(value):
     try:
-        result = urlparse(x)
+        result = urlparse(value)
         if all([result.scheme, result.netloc, result.path]):
             return value
 
