@@ -46,7 +46,7 @@ class Feeder(utils.Loggable):
 
         if self._metrics:
             self._debug('Reporting metrics: Failure=%r, Transmission=%d' % (failure, report))
-        if failure and self._error_counter is not None:
+        if failure and self._failure_counter is not None:
             self._failure_counter.inc()
         if self._transmission_gauge is not None:
             self._transmission_gauge.set(report)
