@@ -39,6 +39,106 @@ listening on to the host by specifying the -p option, for example
 *-p 80:8080* to publish port 80 from the container host to port
 8080 in the container. make sure the port you're using is free.
 
+## using commandline arguments
+
+`docker run -d --name my-running-unbound-zone-feeder
+  --link some-unbound:unbound
+  unbound-zone-feeder:latest
+  --host unbound`
+
+* *--quiet*
+
+  Reduce output verbosity
+
+* *--verbose*
+
+  Increase output verbosity
+
+* *--zone-type*
+
+  Used zone type
+
+* *--retry*
+
+  Number of retries for data retrieval and remote connection
+
+* *--retry-wait*
+
+  Time to wait between retries
+
+* *--metrics*
+
+  Start webserver exposing Prometheus compatible metrics
+
+* *--metrics-port*
+
+  Port binding for metrics listener
+
+* *--metrics-bind*
+
+  Interface for metrics listener
+
+* *--time*
+
+  Time of day to run job. If absent, will run at midnight
+
+* *--day*
+
+  Day of month to run job. If absent, will run every day
+
+
+* *--instant*
+
+  Run a job immediately in addition to the schedule
+
+* *--host*
+
+  Remote Unbound server host name
+
+* *--port*
+
+  Remote Unbound server port number
+
+* *--keyfile*
+
+  SSL key file
+
+* *--certfile*
+
+  SSL certificate file
+
+* *--cacerts*
+
+  CA certificate chain file
+
+* *--blacklist*
+
+  Domain to add
+
+* *--blacklist-url*
+
+  Remote location containing hosts-style domain list
+
+* *--blacklist-file*
+
+  File with blacklisted domains per line
+
+* *--whitelist*
+
+  Domain to exclude from adding
+
+* *--whitelist-file*
+
+  File with whitelisted domains per line
+
+* *--blacklist-stdin*
+
+  Read domains to add from stdin
+
+* *--whitelist-stdin*
+
+  Read domains to exclude from stdin
+
 ## using environment variables
 
 `docker run -d --name my-running-unbound-zone-feeder
