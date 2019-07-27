@@ -3,7 +3,7 @@
 '''
 import os
 import time
-import dnsblackhole
+import requests
 
 import utils
 
@@ -16,6 +16,15 @@ class ProviderWrapper(utils.Loggable):
 
         self._blacklists = blacklists
         self._whitelists = whitelists
+
+    def enable_logger(self, logger=None):
+        for list in self._blacklists:
+            list.enable_logger(logger)
+
+        for list in self._whitelists:
+            list.enable_logger(logger)
+
+        super(ProviderWrapper, self).enable_logger(logger)
 
     def retrieve(self):
         black = []
@@ -56,44 +65,105 @@ class ProviderWrapper(utils.Loggable):
 
         return []
 
-class HostProvider(object):
+class HostProvider(utils.Loggable):
+    def __init__(self):
+        super(HostProvider, self).__init__()
+
     def retrieve(self):
         pass
 
 class RemoteHostsProvider(HostProvider):
     def __init__(self, urls):
+        super(RemoteHostsProvider, self).__init__()
+
         self._urls = urls
 
     def retrieve(self):
-        zone_data = '{domain}'
+        hosts = []
 
-        return dnsblackhole.process_host_file_url([], [], zone_data, self._urls)
+        self._info('Retrieving hosts from %d URLs', len(self._urls))
+
+        for url in self._urls:
+            try:
+                self._debug('Retrieving hosts from %s', url)
+                hosts.extend(self._retrieve(url))
+            except Exception as e:
+                self._warning('Failed to retrieve hosts from %s: %s', url, str(e))
+
+        return hosts
+
+    def _retrieve(self, url):
+        hosts = []
+        r = requests.get(url)
+
+        if r.status_code != 200:
+            return hosts
+
+        for line in r.iter_lines():
+            line = line.decode('utf-8').strip()
+
+            # supported lines include:
+            # 127.0.0.1 domain.name # comment
+            # 0.0.0.0   domain.name:port
+            # ::1       domain.name
+
+            if not line.startswith(('127.', '0.', '::1')):
+                continue
+
+            fragments = line.split()
+
+            if len(fragments) < 2:
+                continue
+
+            # convert to lower case and remove :port
+            host = fragments[1].lower().split(':')[0]
+
+            if host == 'localhost.localdomain' or host == 'localhost':
+                continue
+
+            hosts.append(host)
+
+        return hosts
 
 class FileLinesProvider(HostProvider):
     def __init__(self, files):
+        super(FileLinesProvider, self).__init__()
+
         self._files = files
 
     def retrieve(self):
         hosts = []
 
+        self._info('Reading hosts from %d files', len(self._files))
+
         for file in self._files:
-            with open(os.path.abspath(file), 'rb') as f:
-                for line in f:
-                    try:
-                        host = line.decode('utf-8').strip()
-                    except:
-                        continue
+            try:
+                self._debug('Reading hosts from %s', file)
+                hosts.extend(self._retrieve(file))
+            except Exception as e:
+                self._warning('Failed to read hosts from %s: %s', file, str(e))
 
-                    if host == '' or line.startswith(b'#'):
-                        continue
+        return hosts
 
+    def _retrieve(self, file):
+        hosts = []
+
+        with open(os.path.abspath(file), 'rb') as f:
+            for line in f:
+                host = line.decode('utf-8').strip()
+
+                if host and not host.startswith('#'):
                     hosts.append(host)
 
         return hosts
 
 class ListProvider(HostProvider):
     def __init__(self, hosts):
+        super(ListProvider, self).__init__()
+
         self._hosts = hosts
 
     def retrieve(self):
+        self._debug('Returning %d hosts', len(self._hosts))
+
         return self._hosts

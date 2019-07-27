@@ -12,6 +12,12 @@ services:
       - "127.0.0.1:5300:53/udp"
     networks:
       - control
+  web:
+    image: httpd:unbound-zone-feeder
+    build:
+      context: http
+    networks:
+      - content
   provider:
     image: unbound-zone-feeder:latest
     build:
@@ -22,7 +28,7 @@ services:
       "-b", "malware.inval.id",
       "-w", "grayi.sh", # whitelist host from blacklist.txt
       "-f", "/blacklist.txt",
-      "-u", "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+      "-u", "http://web/hosts.txt",
       "-z", "always_nxdomain",
       "-r", "2",
       "-v",
@@ -41,8 +47,11 @@ services:
       - "127.0.0.1:5380:8080"
     networks:
       - control
+      - content
     depends_on:
       - server
+      - web
 
 networks:
   control:
+  content:

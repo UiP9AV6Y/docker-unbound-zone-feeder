@@ -12,6 +12,10 @@ import prometheus_client.core
 import arguments
 import feeder
 
+if sys.version_info[0] == 2:
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
 def schedule_job(spoon, payload, days = None, hour = None, instant = False):
     daemon = any([days, hour])
     status = 1

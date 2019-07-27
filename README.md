@@ -233,6 +233,45 @@ note that your host's `/path/to/hosts` folder should be populated with a file
 named `hosts.blacklist`. the content of it is formatted with one blacklisted
 host per line.
 
+# input processing
+
+hosts can be read from various sources using different
+retrieval strategies.
+
+## commandline
+
+input provided via the commandline interface is forwarded
+without modifications and **not** filtered.
+
+## file
+
+files are read line by line ignoring empty ones and those
+starting with *#*. no filtering is applied.
+
+## url
+
+remote files are parsed for values following the *hosts file*
+syntax. processing involves:
+
+* accepting lines starting with *127.0.0.1*
+* accepting lines starting with *0.0.0.0*
+* stripping port numbers from hostnames
+* removing trailing comments
+* lowercase conversion
+
+```
+# ignored
+127.0.0.1 localhost
+# valid entries
+127.0.0.1 localhost.test
+0.0.0.0 all.interfaces.test
+127.127.127.127 again.localhost.test # comment
+127.0.0.1 port.localhost.test:8080
+127.0.0.1	tab.localhost.test
+127.0.0.1 utf-8.localhost.test # 😄 unicode character
+::1 ipv6.localhost.test #[IPv6]
+```
+
 # image setup
 
 the image is based on the **3-alpine** tagged **python** image from

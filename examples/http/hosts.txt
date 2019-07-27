@@ -1,0 +1,28 @@
+# example hosts file
+
+# commonly used format
+127.0.0.1 localhost.test
+
+# also sometimes encountered
+0.0.0.0 all.interfaces.test
+
+# trailing comment
+127.127.127.127 again.localhost.test # comment
+
+# leftover port (probably due to bad processing of another source)
+127.0.0.1 port.localhost.test:8080
+
+#        | tab delimiter
+127.0.0.1	tab.localhost.test
+
+# utf-8 compatible
+127.0.0.1 utf-8.localhost.test # 😄 unicode character
+
+# only the first domain is used
+127.0.0.1 first.localhost.test second.localhost.test
+
+# ignored (simple localhost)
+::1 localhost #[IPv6]
+
+# ignored (fully qualified localhost)
+127.0.0.1 localhost.localdomain
